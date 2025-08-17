@@ -1,0 +1,7 @@
+2025-08-17 14:54:51,424 [INFO] Step-1: Folder created: uploads/d070dea1-cec7-485f-97e6-3c36f5e1d909
+2025-08-17 14:54:51,432 [INFO] Using Python executable: venv/bin/python3
+2025-08-17 14:54:51,432 [INFO] Step-2: File sent {'questions.txt': 'uploads/d070dea1-cec7-485f-97e6-3c36f5e1d909/questions.txt'}
+2025-08-17 14:54:51,432 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 0
+2025-08-17 14:55:01,007 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 1
+2025-08-17 14:56:42,326 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 2
+2025-08-17 14:56:50,118 [ERROR] ❌🤖 Step-1: Could not get valid response from LLM after retries.
