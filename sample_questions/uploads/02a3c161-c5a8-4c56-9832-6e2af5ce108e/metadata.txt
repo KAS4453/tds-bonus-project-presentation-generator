@@ -1,0 +1,14 @@
+URL: https://en.wikipedia.org/wiki/List_of_highest-grossing_films
+
+Headings found:
+- Contents
+- List of highest-grossing films
+- Highest-grossing films
+- Highest-grossing films adjusted for inflation
+- High-grossing films by year
+
+Tables found:
+Table 1 headers: ['Rank', 'Peak', 'Title', 'Worldwide gross', 'Year']
+Table 2 headers: ['Rank', 'Title', 'Worldwide gross(2024 $)', 'Year', 'Gone with the Wind']
+
+Successfully downloaded and saved the table to uploads/02a3c161-c5a8-4c56-9832-6e2af5ce108e/highest_grossing_films.csv

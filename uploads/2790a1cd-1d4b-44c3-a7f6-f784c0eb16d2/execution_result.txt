@@ -1,0 +1,868 @@
+
+[2025-08-17 14:23:22]
+✅ requests already installed.
+----------------------------------------
+
+[2025-08-17 14:23:22]
+📦 Installing beautifulsoup4 ...
+----------------------------------------
+
+[2025-08-17 14:23:24]
+📜 Executing Code:
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://en.wikipedia.org/wiki/List_of_highest-grossing_films"
+response = requests.get(url)
+
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", {"class": "wikitable"})
+    summary = ""
+    if table:
+        headers = [th.text.strip() for th in table.find_all("th")]
+        summary = f"Found a table titled 'Highest-grossing films'. Columns: {', '.join(headers[:6])}. The table contains the top films by worldwide gross."
+    else:
+        summary = "Could not find the main data table on the page. Found headings and other text content."
+
+    with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/metadata.txt", "a") as f:
+        f.write(summary + "\n")
+else:
+    with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/metadata.txt", "a") as f:
+        f.write(f"Failed to retrieve the page. Status code: {response.status_code}\n")
+
+----------------------------------------
+
+[2025-08-17 14:23:25]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:23:32]
+📦 Installing pandas ...
+----------------------------------------
+
+[2025-08-17 14:23:44]
+✅ requests already installed.
+----------------------------------------
+
+[2025-08-17 14:23:44]
+📦 Installing lxml ...
+----------------------------------------
+
+[2025-08-17 14:23:46]
+📜 Executing Code:
+import pandas as pd
+import requests
+
+url = "https://en.wikipedia.org/wiki/List_of_highest-grossing_films"
+tables = pd.read_html(requests.get(url).content)
+df = tables[0]
+
+df.to_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv",
+    index=False,
+)
+
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/metadata.txt", "a") as f:
+    f.write(
+        "Successfully scraped and saved the table of highest-grossing films to highest_grossing_films.csv.\n"
+    )
+
+----------------------------------------
+
+[2025-08-17 14:23:48]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:24:15]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:24:15]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:24:15]
+📦 Installing matplotlib ...
+----------------------------------------
+
+[2025-08-17 14:24:20]
+📦 Installing seaborn ...
+----------------------------------------
+
+[2025-08-17 14:24:22]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+# Load and clean the data
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean 'Worldwide gross' column by removing non-numeric characters and casting to float
+df["Worldwide gross"] = (
+    df["Worldwide gross"].astype(str).str.replace(r"\\[[^\]]*\\]", "", regex=True)
+)  # remove citations like [# 1]
+df["Worldwide gross"] = (
+    df["Worldwide gross"].str.replace(r"[^\d.]", "", regex=True).astype(float)
+)
+
+# Clean 'Year' column
+df["Year"] = df["Year"].astype(str).str.extract(r"(\d{4})").astype(int)
+
+# Clean 'Rank' and 'Peak' columns
+df["Rank"] = pd.to_numeric(df["Rank"])
+df["Peak"] = pd.to_numeric(df["Peak"])
+
+# 1. How many $2 bn movies were released before 2000?
+movies_2bn_before_2000 = df[
+    (df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)
+]
+answer1 = len(movies_2bn_before_2000)
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+earliest_film_1_5bn = movies_1_5bn.sort_values("Year").iloc[0]
+answer2 = earliest_film_1_5bn["Title"]
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+# Save plot to base64 string
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+# Compile final answers
+final_answers = [answer1, answer2, answer3, answer4]
+
+# Save the final result as a JSON array
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:24:22]
+❌ Execution error:
+/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/object_array.py:205: FutureWarning: Possible nested set at position 3
+  pat = re.compile(pat, flags=flags)
+Traceback (most recent call last):
+  File "pandas/_libs/lib.pyx", line 2407, in pandas._libs.lib.maybe_convert_numeric
+ValueError: Unable to parse string "24RK"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/job_/script.py", line 21, in <module>
+    df['Peak'] = pd.to_numeric(df['Peak'])
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/tools/numeric.py", line 235, in to_numeric
+    values, new_mask = lib.maybe_convert_numeric(  # type: ignore[call-overload]
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        values,
+        ^^^^^^^
+    ...<4 lines>...
+        and values_dtype.na_value is libmissing.NA,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "pandas/_libs/lib.pyx", line 2449, in pandas._libs.lib.maybe_convert_numeric
+ValueError: Unable to parse string "24RK" at position 32
+
+----------------------------------------
+
+[2025-08-17 14:24:48]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:24:48]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:24:48]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:24:48]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:24:49]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+# Load and clean the data
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean 'Worldwide gross' column
+df["Worldwide gross"] = (
+    df["Worldwide gross"].astype(str).str.replace(r"\\[.*?\]", "", regex=True)
+)  # remove citations
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"[$,]", "", regex=True
+)  # remove dollar signs and commas
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = pd.to_numeric(
+    df["Year"].astype(str).str.extract(r"(\d{4})")[0], errors="coerce"
+)
+
+# Clean 'Rank' and 'Peak' columns by extracting only numeric parts
+df["Rank"] = pd.to_numeric(
+    df["Rank"].astype(str).str.extract(r"(\d+)")[0], errors="coerce"
+)
+df["Peak"] = pd.to_numeric(
+    df["Peak"].astype(str).str.extract(r"(\d+)")[0], errors="coerce"
+)
+
+# Drop rows where crucial numeric conversions might have failed
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+# Convert columns to appropriate integer types
+df["Year"] = df["Year"].astype(int)
+df["Rank"] = df["Rank"].astype(int)
+df["Peak"] = df["Peak"].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+movies_2bn_before_2000 = df[
+    (df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)
+]
+answer1 = len(movies_2bn_before_2000)
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+earliest_film_1_5bn = movies_1_5bn.sort_values("Year").iloc[0]
+answer2 = earliest_film_1_5bn["Title"]
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+# Save plot to base64 string
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+# Compile final answers
+final_answers = [answer1, answer2, answer3, answer4]
+
+# Save the final result as a JSON array
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:24:50]
+❌ Execution error:
+Traceback (most recent call last):
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/job_/script.py", line 13, in <module>
+    df['Worldwide gross'] = df['Worldwide gross'].astype(str).str.replace(r'\\[.*?\]', '', regex=True) # remove citations
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/accessor.py", line 140, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/accessor.py", line 1580, in replace
+    result = self._data.array._str_replace(
+        pat, repl, n=n, case=case, flags=flags, regex=regex
+    )
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/object_array.py", line 205, in _str_replace
+    pat = re.compile(pat, flags=flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/__init__.py", line 289, in compile
+    return _compile(pattern, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/__init__.py", line 350, in _compile
+    p = _compiler.compile(pattern, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_compiler.py", line 748, in compile
+    p = _parser.parse(p, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 980, in parse
+    p = _parse_sub(source, state, flags & SRE_FLAG_VERBOSE, 0)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 459, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                       not nested and not items))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 567, in _parse
+    raise source.error("unterminated character set",
+                       source.tell() - here)
+re.PatternError: unterminated character set at position 2
+
+----------------------------------------
+
+[2025-08-17 14:25:19]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:25:19]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:25:19]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:25:19]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:25:19]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+# Load and clean the data
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean 'Worldwide gross' column
+# Corrected regex to remove citations like [1], [# 1], etc.
+df["Worldwide gross"] = (
+    df["Worldwide gross"].astype(str).str.replace(r"\[[^\]]*\]", "", regex=True)
+)
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"[$,]", "", regex=True
+)  # remove dollar signs and commas
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = pd.to_numeric(
+    df["Year"].astype(str).str.extract(r"(\d{4})")[0], errors="coerce"
+)
+
+# Clean 'Rank' and 'Peak' columns by extracting only numeric parts
+df["Rank"] = pd.to_numeric(
+    df["Rank"].astype(str).str.extract(r"(\d+)")[0], errors="coerce"
+)
+df["Peak"] = pd.to_numeric(
+    df["Peak"].astype(str).str.extract(r"(\d+)")[0], errors="coerce"
+)
+
+# Drop rows where crucial numeric conversions might have failed
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+# Convert columns to appropriate integer types
+df["Year"] = df["Year"].astype(int)
+df["Rank"] = df["Rank"].astype(int)
+df["Peak"] = df["Peak"].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+movies_2bn_before_2000 = df[
+    (df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)
+]
+answer1 = len(movies_2bn_before_2000)
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+if not movies_1_5bn.empty:
+    earliest_film_1_5bn = movies_1_5bn.sort_values("Year").iloc[0]
+    answer2 = earliest_film_1_5bn["Title"]
+else:
+    answer2 = "No film found grossing over $1.5 bn"
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+# Save plot to base64 string
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+# Compile final answers
+final_answers = [answer1, answer2, answer3, answer4]
+
+# Save the final result as a JSON array
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:25:20]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:26:05]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:26:05]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:26:05]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:26:05]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:26:05]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# More robust cleaning for 'Worldwide gross' column
+df["Worldwide gross"] = (
+    df["Worldwide gross"].astype(str).str.replace(r"\\[.*?\]", "", regex=True)
+)
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(r"[^0-9]", "", regex=True)
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = df["Year"].astype(str).str.extract(r"(\d{4})").iloc[:, 0]
+df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
+
+# Clean 'Rank' and 'Peak' columns
+df["Rank"] = df["Rank"].astype(str).str.extract(r"(\d+)").iloc[:, 0]
+df["Rank"] = pd.to_numeric(df["Rank"], errors="coerce")
+df["Peak"] = df["Peak"].astype(str).str.extract(r"(\d+)").iloc[:, 0]
+df["Peak"] = pd.to_numeric(df["Peak"], errors="coerce")
+
+
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+df["Year"] = df["Year"].astype(int)
+df["Rank"] = df["Rank"].astype(int)
+df["Peak"] = df["Peak"].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+movies_2bn_before_2000 = df[
+    (df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)
+]
+answer1 = len(movies_2bn_before_2000)
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+if not movies_1_5bn.empty:
+    earliest_film_1_5bn = movies_1_5bn.sort_values("Year").iloc[0]
+    answer2 = earliest_film_1_5bn["Title"]
+else:
+    answer2 = "No film found grossing over $1.5 bn"
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+final_answers = [answer1, answer2, answer3, answer4]
+
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:26:07]
+❌ Execution error:
+Traceback (most recent call last):
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/job_/script.py", line 12, in <module>
+    df['Worldwide gross'] = df['Worldwide gross'].astype(str).str.replace(r'\\[.*?\]', '', regex=True)
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/accessor.py", line 140, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/accessor.py", line 1580, in replace
+    result = self._data.array._str_replace(
+        pat, repl, n=n, case=case, flags=flags, regex=regex
+    )
+  File "/home/kas4453/kas/tds-project-2-data-analyst-agent/venv/lib/python3.13/site-packages/pandas/core/strings/object_array.py", line 205, in _str_replace
+    pat = re.compile(pat, flags=flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/__init__.py", line 289, in compile
+    return _compile(pattern, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/__init__.py", line 350, in _compile
+    p = _compiler.compile(pattern, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_compiler.py", line 748, in compile
+    p = _parser.parse(p, flags)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 980, in parse
+    p = _parse_sub(source, state, flags & SRE_FLAG_VERBOSE, 0)
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 459, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                       not nested and not items))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kas4453/miniconda3/lib/python3.13/re/_parser.py", line 567, in _parse
+    raise source.error("unterminated character set",
+                       source.tell() - here)
+re.PatternError: unterminated character set at position 2
+
+----------------------------------------
+
+[2025-08-17 14:26:55]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:26:55]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:26:55]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:26:55]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:26:55]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean 'Worldwide gross' column
+df["Worldwide gross"] = (
+    df["Worldwide gross"].astype(str).str.replace(r"\\[[^\]]*\\]", "", regex=True)
+)
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(r"[$,]", "", regex=True)
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = df["Year"].astype(str).str.extract(r"(\\d{4})").iloc[:, 0]
+df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
+
+# Clean 'Rank' and 'Peak' columns
+df["Rank"] = df["Rank"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Rank"] = pd.to_numeric(df["Rank"], errors="coerce")
+df["Peak"] = df["Peak"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Peak"] = pd.to_numeric(df["Peak"], errors="coerce")
+
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+df["Year"] = df["Year"].astype(int)
+df["Rank"] = df["Rank"].astype(int)
+df["Peak"] = df["Peak"].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+movies_2bn_before_2000 = df[
+    (df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)
+]
+answer1 = len(movies_2bn_before_2000)
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+if not movies_1_5bn.empty:
+    earliest_film_1_5bn = movies_1_5bn.sort_values("Year").iloc[0]
+    answer2 = earliest_film_1_5bn["Title"]
+else:
+    answer2 = "No film found grossing over $1.5 bn"
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+final_answers = [answer1, answer2, answer3, answer4]
+
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:26:56]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:28:03]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:28:03]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:28:03]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:28:03]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:28:03]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean 'Worldwide gross' column
+df["Worldwide gross"] = df["Worldwide gross"].astype(str)
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"\\[[^\]]*\\]", "", regex=True
+)  # Remove citations
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"[^\\d.]", "", regex=True
+)  # Remove non-digit characters
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = df["Year"].astype(str).str.extract(r"(\\d{4})").iloc[:, 0]
+df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
+
+# Clean 'Rank' and 'Peak' columns
+df["Rank"] = df["Rank"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Rank"] = pd.to_numeric(df["Rank"], errors="coerce")
+df["Peak"] = df["Peak"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Peak"] = pd.to_numeric(df["Peak"], errors="coerce")
+
+# Drop rows where parsing failed
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+# Convert types after cleaning
+df[["Year", "Rank", "Peak"]] = df[["Year", "Rank", "Peak"]].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+answer1 = df[(df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)].shape[0]
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+if not movies_1_5bn.empty:
+    earliest_film_1_5bn = movies_1_5bn.sort_values("Year", ascending=True).iloc[0]
+    answer2 = earliest_film_1_5bn["Title"]
+else:
+    answer2 = "Error: No film found grossing over $1.5 bn"
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+final_answers = [answer1, answer2, answer3, answer4]
+
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:28:04]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:29:11]
+✅ pandas already installed.
+----------------------------------------
+
+[2025-08-17 14:29:11]
+✅ numpy already installed.
+----------------------------------------
+
+[2025-08-17 14:29:11]
+✅ matplotlib already installed.
+----------------------------------------
+
+[2025-08-17 14:29:11]
+✅ seaborn already installed.
+----------------------------------------
+
+[2025-08-17 14:29:11]
+📜 Executing Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
+import json
+import re
+
+df = pd.read_csv(
+    "uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/highest_grossing_films.csv"
+)
+
+# Clean Title column to remove citations
+df["Title"] = df["Title"].astype(str).str.replace(r"\[.*?\]", "", regex=True)
+
+# Clean 'Worldwide gross' column
+df["Worldwide gross"] = df["Worldwide gross"].astype(str)
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"\[.*?\]", "", regex=True
+)  # Remove citations
+df["Worldwide gross"] = df["Worldwide gross"].str.replace(
+    r"[$,]", "", regex=True
+)  # Remove $ and ,
+df["Worldwide gross"] = pd.to_numeric(df["Worldwide gross"], errors="coerce")
+
+# Clean 'Year' column
+df["Year"] = df["Year"].astype(str).str.extract(r"(\\d{4})").iloc[:, 0]
+df["Year"] = pd.to_numeric(df["Year"], errors="coerce")
+
+# Clean 'Rank' and 'Peak' columns
+df["Rank"] = df["Rank"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Rank"] = pd.to_numeric(df["Rank"], errors="coerce")
+df["Peak"] = df["Peak"].astype(str).str.extract(r"(\\d+)").iloc[:, 0]
+df["Peak"] = pd.to_numeric(df["Peak"], errors="coerce")
+
+# Drop rows where crucial numeric conversions failed
+df.dropna(subset=["Worldwide gross", "Year", "Rank", "Peak", "Title"], inplace=True)
+
+# Convert columns to appropriate integer types
+df["Year"] = df["Year"].astype(int)
+df["Rank"] = df["Rank"].astype(int)
+df["Peak"] = df["Peak"].astype(int)
+
+# 1. How many $2 bn movies were released before 2000?
+answer1 = df[(df["Worldwide gross"] >= 2_000_000_000) & (df["Year"] < 2000)].shape[0]
+
+# 2. Which is the earliest film that grossed over $1.5 bn?
+movies_1_5bn = df[df["Worldwide gross"] >= 1_500_000_000]
+if not movies_1_5bn.empty:
+    earliest_film_1_5bn = movies_1_5bn.sort_values("Year", ascending=True).iloc[0]
+    answer2 = earliest_film_1_5bn["Title"]
+else:
+    answer2 = "No film found grossing over $1.5 bn"
+
+# 3. What's the correlation between the Rank and Peak?
+answer3 = df["Rank"].corr(df["Peak"])
+
+# 4. Draw a scatterplot of Rank and Peak
+plt.figure(figsize=(10, 6))
+sns.regplot(x="Rank", y="Peak", data=df, line_kws={"color": "red", "linestyle": "--"})
+plt.title("Rank vs. Peak of Highest-Grossing Films")
+plt.xlabel("Rank")
+plt.ylabel("Peak")
+plt.grid(True)
+
+buf = io.BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+image_base64 = base64.b64encode(buf.read()).decode("utf-8")
+answer4 = f"data:image/png;base64,{image_base64}"
+plt.close()
+
+final_answers = [answer1, answer2, answer3, answer4]
+
+with open("uploads/2790a1cd-1d4b-44c3-a7f6-f784c0eb16d2/result.json", "w") as f:
+    json.dump(final_answers, f)
+
+----------------------------------------
+
+[2025-08-17 14:29:12]
+✅ Code executed successfully:
+
+----------------------------------------
+
+[2025-08-17 14:29:34]
+📜 Executing Code:
+
+----------------------------------------
+
+[2025-08-17 14:29:34]
+✅ Code executed successfully:
+
+----------------------------------------

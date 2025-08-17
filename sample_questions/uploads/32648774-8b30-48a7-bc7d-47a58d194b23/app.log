@@ -1,0 +1,34 @@
+2025-08-17 07:43:01,983 [INFO] Step-1: Folder created: uploads/32648774-8b30-48a7-bc7d-47a58d194b23
+2025-08-17 07:43:01,989 [INFO] Using Python executable: venv/bin/python3
+2025-08-17 07:43:01,989 [INFO] Step-2: File sent {'questions.txt': 'uploads/32648774-8b30-48a7-bc7d-47a58d194b23/questions.txt'}
+2025-08-17 07:43:01,989 [INFO] 🤖 Step-1: Getting scrap code and metadata from llm. Tries count = 0
+2025-08-17 07:43:07,158 [INFO] 🤖 Step-1: Successfully parsed response from LLM.
+2025-08-17 07:43:07,158 [INFO] 💻 Step-3: Entering loop
+2025-08-17 07:43:07,158 [INFO] 💻 Loop-1: Running LLM code.
+2025-08-17 07:43:23,733 [ERROR] ❌💻 Loop-1: Code execution failed: ❌ Execution error: Traceback (most recent call last): File "/home/kas4453/kas/tds-project-2/uploads/32648774-8b30-48a7-bc7d-47a58d194b23/job_/script.py", line 2, in <module> df = pd.read_csv('sample-sales.csv') File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv return _read(filepath_or_buffer, kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 620, in _read parser = TextFileReader(filepath_or_buffer, **kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__ self._engine = self._make_engine(f, self.engine) ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine self.handles = get_handle( ~~~~~~~~~~^ f, ^^ ...<6 lines>... storage_options=self.options.get("storage_options", None), ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ) ^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/common.py", line 873, in get_handle handle = open( handle, ...<3 lines>... newline="", ) FileNotFoundError: [Errno 2] No such file or directory: 'sample-sales.csv'
+2025-08-17 07:43:23,734 [INFO] 🤖 Loop-1: Inside Loop LLM call.
+2025-08-17 07:43:29,110 [INFO] 💻 Loop-2: Running LLM code.
+2025-08-17 07:43:29,588 [ERROR] ❌💻 Loop-2: Code execution failed: ❌ Execution error: Traceback (most recent call last): File "/home/kas4453/kas/tds-project-2/uploads/32648774-8b30-48a7-bc7d-47a58d194b23/job_/script.py", line 2, in <module> df = pd.read_csv('uploads/32648774-8b30-48a7-bc7d-47a58d194b23/sample-sales.csv') File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv return _read(filepath_or_buffer, kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 620, in _read parser = TextFileReader(filepath_or_buffer, **kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__ self._engine = self._make_engine(f, self.engine) ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine self.handles = get_handle( ~~~~~~~~~~^ f, ^^ ...<6 lines>... storage_options=self.options.get("storage_options", None), ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ) ^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/common.py", line 873, in get_handle handle = open( handle, ...<3 lines>... newline="", ) FileNotFoundError: [Errno 2] No such file or directory: 'uploads/32648774-8b30-48a7-bc7d-47a58d194b23/sample-sales.csv'
+2025-08-17 07:43:29,588 [INFO] 🤖 Loop-2: Inside Loop LLM call.
+2025-08-17 07:46:12,584 [INFO] 🤖 Loop-2: Inside Loop LLM call.
+2025-08-17 07:46:18,575 [INFO] 💻 Loop-3: Running LLM code.
+2025-08-17 07:46:18,866 [INFO] ✅💻 Loop-3: Code executed successfully.
+2025-08-17 07:46:18,866 [INFO] 🤖 Loop-3: Inside Loop LLM call.
+2025-08-17 07:46:26,163 [INFO] 💻 Loop-4: Running LLM code.
+2025-08-17 07:46:26,527 [ERROR] ❌💻 Loop-4: Code execution failed: ❌ Execution error: Traceback (most recent call last): File "/home/kas4453/kas/tds-project-2/uploads/32648774-8b30-48a7-bc7d-47a58d194b23/job_/script.py", line 2, in <module> df = pd.read_csv('sample-sales.csv') File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv return _read(filepath_or_buffer, kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 620, in _read parser = TextFileReader(filepath_or_buffer, **kwds) File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__ self._engine = self._make_engine(f, self.engine) ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine self.handles = get_handle( ~~~~~~~~~~^ f, ^^ ...<6 lines>... storage_options=self.options.get("storage_options", None), ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ) ^ File "/home/kas4453/kas/tds-project-2/venv/lib/python3.13/site-packages/pandas/io/common.py", line 873, in get_handle handle = open( handle, ...<3 lines>... newline="", ) FileNotFoundError: [Errno 2] No such file or directory: 'sample-sales.csv'
+2025-08-17 07:46:26,528 [INFO] 🤖 Loop-4: Inside Loop LLM call.
+2025-08-17 07:47:25,094 [INFO] 💻 Loop-5: Running LLM code.
+2025-08-17 07:47:34,368 [INFO] ✅💻 Loop-5: Code executed successfully.
+2025-08-17 07:47:34,368 [INFO] ✅📁 Loop-5: Found result files.
+2025-08-17 07:47:34,368 [INFO] 🤖 Loop-5: Checking result validity.
+2025-08-17 07:48:25,234 [INFO] 🤖 Loop-5: Checking result validity.
+2025-08-17 07:48:46,119 [INFO] 🤖 Loop-5: Checking result validity.
+2025-08-17 07:49:05,156 [INFO] 💻 Loop-5: Re-running code as per validation result.
+2025-08-17 07:49:05,156 [INFO] 💻 Loop-6: Running LLM code.
+2025-08-17 07:49:05,186 [INFO] ✅💻 Loop-6: Code executed successfully.
+2025-08-17 07:49:05,187 [INFO] ✅📁 Loop-6: Found result files.
+2025-08-17 07:49:05,187 [INFO] 🤖 Loop-6: Checking result validity.
+2025-08-17 07:49:14,008 [INFO] ✅ Loop-6: Validation successful, no re-run needed.
+2025-08-17 07:49:14,008 [INFO] 💻 Step-6: Running final code.
+2025-08-17 07:49:14,023 [INFO] 📁 Step-7: Reading result.json
+2025-08-17 07:49:14,023 [INFO] ✅📁 Step-7: send result back

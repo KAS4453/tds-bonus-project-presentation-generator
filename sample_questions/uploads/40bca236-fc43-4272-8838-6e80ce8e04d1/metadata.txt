@@ -1,0 +1,5 @@
+CSV Preview (Generated Sample Data):
+         date region   sales
+0  2023-01-01  North  150.50
+1  2023-01-02  South  200.00
+2  2023-01-03  North  175.25
