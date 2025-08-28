@@ -1,0 +1,8 @@
+# This is the content for the `.gitignore` file.
+# Save it in `decksmith-ai/backend/.gitignore`.
+# This tells Git (version control) to ignore these files and folders.
+
+venv/
+__pycache__/
+*.pyc
+.env

@@ -1,4 +1,0 @@
-
-Error: Could not find the file in specified paths. [Errno 2] No such file or directory: 'uploads/32648774-8b30-48a7-bc7d-47a58d194b23/sample-sales.csv'
-
-Error: Could not locate the source file. A placeholder result has been generated.
